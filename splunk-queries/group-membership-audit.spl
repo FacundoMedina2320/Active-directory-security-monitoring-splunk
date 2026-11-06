@@ -1,0 +1,6 @@
+index=endpoint host="ADDC01" sourcetype="WinEventLog:Security" EventCode=4728
+| rex field=_raw "(?s)Subject:\s+Security ID:.*?Account Name:\s+(?<Administrator>\S+)"
+| rex field=_raw "(?s)Member:\s+Security ID:.*?Account Name:\s+(?<AddedMember>[^\r\n]+)"
+| rex field=_raw "(?s)Group:\s+Security ID:.*?Group Name:\s+(?<SecurityGroup>[^\r\n]+)"
+| table _time, Administrator, AddedMember, SecurityGroup
+| sort -_time
