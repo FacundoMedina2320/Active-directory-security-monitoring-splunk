@@ -120,7 +120,7 @@ The pictured dashboard was captured in edit mode. Counts are historical for the 
 
 ## Evidence
 
-Eight selected, real lab screenshots are organized under [screenshots/](). No credentials, tokens or live external endpoints are included.
+Eight selected, real lab screenshots are available in the repository root and linked throughout this README. No credentials, tokens or live external endpoints are included.
 
 ---
 **Tools:** Windows Server 2022 · Active Directory DS · Windows 10 · Splunk Enterprise 10.0.1 · Universal Forwarder · Sysmon (client) · PowerShell · SPL · VirtualBox.
