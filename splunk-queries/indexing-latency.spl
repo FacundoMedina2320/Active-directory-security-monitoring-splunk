@@ -1,0 +1,6 @@
+index=endpoint host="ADDC01" sourcetype="WinEventLog:Security" EventCode=4728
+| eval EventTime=strftime(_time,"%Y-%m-%d %H:%M:%S")
+| eval IndexedTime=strftime(_indextime,"%Y-%m-%d %H:%M:%S")
+| eval DelayMinutes=round((_indextime-_time)/60,2)
+| table EventTime, IndexedTime, DelayMinutes
+| sort -EventTime
