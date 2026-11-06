@@ -1,0 +1,3 @@
+index=endpoint sourcetype="WinEventLog:Security" EventCode=4625
+| stats count AS "Failed Logons" by host
+| sort -"Failed Logons"
