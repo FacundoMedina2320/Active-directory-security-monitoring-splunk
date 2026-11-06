@@ -1,0 +1,10 @@
+index=endpoint host="ADDC01" sourcetype="WinEventLog:Security"
+(EventCode=4720 OR EventCode=4726 OR EventCode=4728 OR EventCode=4732)
+| eval Action=case(
+    EventCode=4720,"User Created",
+    EventCode=4726,"User Deleted",
+    EventCode=4728,"Member Added to Global Group",
+    EventCode=4732,"Member Added to Local Group"
+  )
+| stats count by Action
+| sort -count
