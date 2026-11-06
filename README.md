@@ -34,7 +34,7 @@ Splunk Enterprise was verified running with listeners on TCP **8000** and **9997
 
 The lab configuration example is available at [configuration-examples/inputs.conf](configuration-examples/inputs.conf). It deliberately does not include Sysmon for ADDC01, because installation on that server was not validated.
 
-![ADDC01 Windows log ingestion](screenshots/01-addc01-log-ingestion.png)
+![ADDC01 Windows log ingestion](01-addc01-log-ingestion.png)
 
 ### 2. Failed logon investigation — Event 4625
 
@@ -44,23 +44,23 @@ In a historical **All time** search, 75 failed-logon records appeared across the
 
 A separate investigation found network logon failures associated with source `192.168.10.250` (the Kali lab address), including the `jsmith` test account; these records were treated as lab authentication failures rather than confirmed malicious activity.
 
-![Failed logon counts by host](screenshots/02-failed-logons-by-host.png)
+![Failed logon counts by host](02-failed-logons-by-host.png)
 
 ### 3. AD group membership audit — Event 4728
 
 Windows Security Event **4728** records an addition to a security-enabled global group. A raw ADDC01 event was examined to identify the actor (**Subject**), added account (**Member**) and affected group (**Group**).
 
-![Raw Windows Event 4728](screenshots/03-raw-event-4728.png)
+![Raw Windows Event 4728](03-raw-event-4728.png)
 
 Some parsed Splunk fields were ambiguous or blank. I used targeted `rex` extractions from `_raw` to produce consistent `Administrator`, `AddedMember`, and `SecurityGroup` columns. The exact SPL is in [group-membership-audit.spl](splunk-queries/group-membership-audit.spl). These expressions match the observed English text event format and may need adjustment for localized or XML-formatted logs.
 
-![Parsed group membership audit](screenshots/04-ad-group-audit-extraction.png)
+![Parsed group membership audit](04-ad-group-audit-extraction.png)
 
 ### 4. Controlled test
 
 A dedicated **global security group**, `LAB-Security-Monitoring`, was created in the lab domain. The test accounts `daniel.wilson` and `christopher.white` were added with PowerShell and verified using `Get-ADGroupMember`.
 
-![Test membership change](screenshots/05-ad-test-group-membership.png)
+![Test membership change](05-ad-test-group-membership.png)
 
 The corresponding two Event 4728 records appeared in Splunk, with `Administrator` as the actor, each user's distinguished name, and `LAB-Security-Monitoring` as the affected group.
 
@@ -74,9 +74,9 @@ The corresponding two Event 4728 records appeared in Splunk, with `Administrator
 - Trigger: number of results greater than zero; action **Add to Triggered Alerts**.
 - Validation: a triggered alert was recorded on 6 November 2026. Viewing the scheduled search results showed both controlled membership additions.
 
-![Scheduled alert fired](screenshots/06-splunk-triggered-alert.png)
+![Scheduled alert fired](06-splunk-triggered-alert.png)
 
-![Scheduled alert results](screenshots/07-splunk-alert-results.png)
+![Scheduled alert results](07-splunk-alert-results.png)
 
 **Limitation:** the 15-minute window overlaps with a five-minute schedule, so an event may appear in multiple runs; production deployment would require adjusted lookback and suppression/deduplication. This is a *scheduled* detection, not a real-time stream rule.
 
@@ -88,7 +88,7 @@ The dashboard **Active Directory Security Monitoring** contains:
 - **Failed Logon Attempts by Host:** Event 4625 grouped by indexed host.
 - **Security Group Membership Audit:** timestamp, administrator, member and affected group for Event 4728.
 
-![Three-panel Splunk dashboard](screenshots/08-security-monitoring-dashboard.png)
+![Three-panel Splunk dashboard](08-security-monitoring-dashboard.png)
 
 The pictured dashboard was captured in edit mode. Counts are historical for the selected time range, not a live threat score.
 
@@ -120,7 +120,7 @@ The pictured dashboard was captured in edit mode. Counts are historical for the 
 
 ## Evidence
 
-Eight selected, real lab screenshots are organized under [screenshots/](screenshots/). No credentials, tokens or live external endpoints are included.
+Eight selected, real lab screenshots are organized under [screenshots/](). No credentials, tokens or live external endpoints are included.
 
 ---
 **Tools:** Windows Server 2022 · Active Directory DS · Windows 10 · Splunk Enterprise 10.0.1 · Universal Forwarder · Sysmon (client) · PowerShell · SPL · VirtualBox.
